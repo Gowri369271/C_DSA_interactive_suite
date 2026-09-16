@@ -303,7 +303,7 @@ void run_legacy_menu(void)
                                        "7. Standalone File Exporter Engine\n"
                                        "8. State Serialization & Deserialization Engine\n"
                                        "\nenter choice (\'-1\' to exit) : ",
-                                       1, 9);
+                                       1, 8);
                     if (dev_status == INPUT_EXIT_SIGNAL)
                         break;
                     if (dev_status == 0)
@@ -317,14 +317,12 @@ void run_legacy_menu(void)
                     else if (dev_choice == 4)
                         settings_menu_demo();
                     else if (dev_choice == 5)
-                        cache_simulator_demo();
-                    else if (dev_choice == 6)
                         fuzzer_demo();
-                    else if (dev_choice == 7)
+                    else if (dev_choice == 6)
                         bigo_verifier_demo();
-                    else if (dev_choice == 8)
+                    else if (dev_choice == 7)
                         file_exporter_demo();
-                    else if (dev_choice == 9)
+                    else if (dev_choice == 8)
                         serialization_demo();
                 }
                 break;
