@@ -2,7 +2,7 @@
 
 Thank you for taking the time to contribute! This project is open to learners, systems enthusiasts, and low-level programmers who want to build something meaningful in C. You will need deep technical knowledge, as this project is made with raw C, has a CI which runs CMake, a formatting system, a build system and dockerization support. But dont worry, I am always willing to help contributors in any way I can. You can join my discord server for that purpose.
 
-link - https://discord.gg/zVpyuXHMF
+link - https://discord.gg/TzcBNb7bK
 
 ---
 
@@ -21,16 +21,14 @@ link - https://discord.gg/zVpyuXHMF
 
 ## Getting Started
 
-### Note for SSOC contributors
+### Note for Windows contributors
 
 This project is Linux native. Which means it is made, maintained on Linux and works the best on Linux, however, you can definitely develop and run/use this application on windows through WSL(Windows Subsystem for Linux). WSL will work in VScode too so you can rest assured, just be familiar with WSL before contributing to this project. You can also use a VM, but WSL is sufficient as per the project requirements.
 
 Also note that you must run `make fmt` before submitting your PR otherwise CI will definitely fail
 
-After you make a PR, it is your responsibility to get it merged within 72 hours. After that I will simply close the PR as it will be classified as 'stale'.  
-
 I have created a special discord server to resolve your issues and doubts regarding the project and contribution. There we can discuss everything about the project as well as your technical/conceptual doubts. 
-Here is the link - https://discord.gg/RxepKBWBX
+Here is the link - https://discord.gg/TzcBNb7bK
 
 ### AI usage policy
 
@@ -115,7 +113,7 @@ This project is written in **C11**. All contributions must follow the existing s
 - All user input must go through input validation functions in `src/utils` — no raw `scanf`,`fgets`
 - Format your code using `.clang-format` before submitting — run `make fmt`. Note that formatting checks are enforced at the CI level. Not running `make fmt` will cause the CI to fail
 - When adding a new module, respect the existing code conventions and ask straight away if you dont understand anything
-- Compile cleanly under `-Wall -Wextra -Werror -std=c11` so even warning are treated as errors. It helps to avoid accumulation of dead code.
+- Compile cleanly under `-Wall -Wextra -Werror -std=c11` so even warning are treated as errors. It helps to avoid accumulation of dead or potentially harmful code.
 
 ---
 
