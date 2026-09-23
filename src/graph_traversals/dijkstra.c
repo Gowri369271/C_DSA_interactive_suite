@@ -154,77 +154,76 @@ void dijkstra(weightedGraph* graph, int start)
 
     start_t = clock();
 
-        PQ_graph pq = {0};
-        init_pq_graph(&pq, 10);
-        telemetry_bridge_reset("Dijkstra (Binary)");
+    PQ_graph pq = {0};
+    init_pq_graph(&pq, 10);
+    telemetry_bridge_reset("Dijkstra (Binary)");
 
-        if (!insert_pq_graph(&pq, start, 0))
-        {
-            printf("Malloc failed\n");
-            PQ_Destroy(&pq);
-            return;
-        }
-
-        PQ_graph_node currentNode;
-        int step_counter = 1;
-
-        while (extractTop_pq_graph(&pq, &currentNode))
-        {
-            int u = currentNode.vertex;
-
-            if (currentNode.distance > dist[u])
-                continue;
-
-            char msg[128];
-            snprintf(msg, sizeof(msg), "Dijkstra (Binary): Extracted node %d (distance %d)", u,
-                     dist[u]);
-
-            // Update Telemetry Bridge on extraction
-            AlgorithmStateBridge bridge = {0};
-            telemetry_bridge_get(&bridge);
-            strncpy(bridge.algorithm_name, "Dijkstra (Binary)", sizeof(bridge.algorithm_name) - 1);
-            bridge.step_index = step_counter++;
-            bridge.var_count = 2;
-            strncpy(bridge.variables[0].name, "curr_vertex", 31);
-            snprintf(bridge.variables[0].value, 63, "%d", u);
-            strncpy(bridge.variables[1].name, "curr_dist", 31);
-            snprintf(bridge.variables[1].value, 63, "%d", dist[u]);
-            strncpy(bridge.status_message, msg, sizeof(bridge.status_message) - 1);
-            telemetry_bridge_update(&bridge);
-
-            algorithm_step_hook(msg);
-
-            Edge* current = graph->array[u];
-
-            while (current != NULL)
-            {
-                int v = current->destination;
-                int currentWeight = current->weight;
-                if (dist[u] != INT_MAX && dist[u] + currentWeight < dist[v])
-                {
-                    dist[v] = dist[u] + currentWeight;
-                    snprintf(msg, sizeof(msg),
-                             "Dijkstra (Binary): Relaxed edge %d -> %d (new dist %d)", u, v,
-                             dist[v]);
-
-                    // Update Telemetry Bridge on relaxation
-                    bridge.step_index = step_counter++;
-                    strncpy(bridge.status_message, msg, sizeof(bridge.status_message) - 1);
-                    telemetry_bridge_update(&bridge);
-
-                    algorithm_step_hook(msg);
-                    if (!insert_pq_graph(&pq, v, dist[v]))
-                    {
-                        printf("Malloc Failed\n");
-                        PQ_Destroy(&pq);
-                        return;
-                    }
-                }
-
-                current = current->next;
-            }
-        }
+    if (!insert_pq_graph(&pq, start, 0))
+    {
+        printf("Malloc failed\n");
         PQ_Destroy(&pq);
+        return;
+    }
+
+    PQ_graph_node currentNode;
+    int step_counter = 1;
+
+    while (extractTop_pq_graph(&pq, &currentNode))
+    {
+        int u = currentNode.vertex;
+
+        if (currentNode.distance > dist[u])
+            continue;
+
+        char msg[128];
+        snprintf(msg, sizeof(msg), "Dijkstra (Binary): Extracted node %d (distance %d)", u,
+                 dist[u]);
+
+        // Update Telemetry Bridge on extraction
+        AlgorithmStateBridge bridge = {0};
+        telemetry_bridge_get(&bridge);
+        strncpy(bridge.algorithm_name, "Dijkstra (Binary)", sizeof(bridge.algorithm_name) - 1);
+        bridge.step_index = step_counter++;
+        bridge.var_count = 2;
+        strncpy(bridge.variables[0].name, "curr_vertex", 31);
+        snprintf(bridge.variables[0].value, 63, "%d", u);
+        strncpy(bridge.variables[1].name, "curr_dist", 31);
+        snprintf(bridge.variables[1].value, 63, "%d", dist[u]);
+        strncpy(bridge.status_message, msg, sizeof(bridge.status_message) - 1);
+        telemetry_bridge_update(&bridge);
+
+        algorithm_step_hook(msg);
+
+        Edge* current = graph->array[u];
+
+        while (current != NULL)
+        {
+            int v = current->destination;
+            int currentWeight = current->weight;
+            if (dist[u] != INT_MAX && dist[u] + currentWeight < dist[v])
+            {
+                dist[v] = dist[u] + currentWeight;
+                snprintf(msg, sizeof(msg), "Dijkstra (Binary): Relaxed edge %d -> %d (new dist %d)",
+                         u, v, dist[v]);
+
+                // Update Telemetry Bridge on relaxation
+                bridge.step_index = step_counter++;
+                strncpy(bridge.status_message, msg, sizeof(bridge.status_message) - 1);
+                telemetry_bridge_update(&bridge);
+
+                algorithm_step_hook(msg);
+                if (!insert_pq_graph(&pq, v, dist[v]))
+                {
+                    printf("Malloc Failed\n");
+                    PQ_Destroy(&pq);
+                    return;
+                }
+            }
+
+            current = current->next;
+        }
+    }
+    PQ_Destroy(&pq);
 
     end_t = clock();
     total_t = (double)(end_t - start_t) / CLOCKS_PER_SEC;
