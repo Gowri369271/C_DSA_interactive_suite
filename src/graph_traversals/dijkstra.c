@@ -149,15 +149,11 @@ void dijkstra(weightedGraph* graph, int start)
 
     dist[start] = 0;
 
-    int heap_choice = 1;
-
     clock_t start_t, end_t;
     double total_t = 0.0;
 
     start_t = clock();
 
-    if (heap_choice == 1)
-    {
         PQ_graph pq = {0};
         init_pq_graph(&pq, 10);
         telemetry_bridge_reset("Dijkstra (Binary)");
@@ -229,112 +225,6 @@ void dijkstra(weightedGraph* graph, int start)
             }
         }
         PQ_Destroy(&pq);
-    }
-    else if (heap_choice == 2)
-    {
-        FibonacciNode* fib_heap = NULL;
-        FibonacciNode** node_ptrs = (FibonacciNode**)calloc(size, sizeof(FibonacciNode*));
-        if (node_ptrs == NULL)
-        {
-            printf("Malloc failed\n");
-            return;
-        }
-
-        fib_heap = fib_heap_insert(fib_heap, 0, start);
-        node_ptrs[start] = fib_heap;
-
-        while (fib_heap != NULL)
-        {
-            int u, min_dist;
-            fib_heap = fib_heap_extract_min(fib_heap, &min_dist, &u);
-            node_ptrs[u] = NULL;
-
-            if (min_dist > dist[u])
-                continue;
-
-            char msg[128];
-            snprintf(msg, sizeof(msg), "Dijkstra (Fibonacci): Extracted node %d (distance %d)", u,
-                     dist[u]);
-            algorithm_step_hook(msg);
-
-            Edge* current = graph->array[u];
-            while (current != NULL)
-            {
-                int v = current->destination;
-                int currentWeight = current->weight;
-                if (dist[u] != INT_MAX && dist[u] + currentWeight < dist[v])
-                {
-                    dist[v] = dist[u] + currentWeight;
-                    snprintf(msg, sizeof(msg),
-                             "Dijkstra (Fibonacci): Relaxed edge %d -> %d (new dist %d)", u, v,
-                             dist[v]);
-                    algorithm_step_hook(msg);
-                    if (node_ptrs[v] == NULL)
-                    {
-                        node_ptrs[v] = fib_heap_insert(fib_heap, dist[v], v);
-                        fib_heap = node_ptrs[v];
-                    }
-                    else
-                    {
-                        fib_heap = fib_heap_decrease_key(fib_heap, node_ptrs[v], dist[v]);
-                    }
-                }
-                current = current->next;
-            }
-        }
-        free(node_ptrs);
-    }
-    else if (heap_choice == 3)
-    {
-        DAryHeap* dary_heap = create_dary_heap(size * 10, 4);
-        if (dary_heap == NULL)
-        {
-            printf("Malloc failed\n");
-            return;
-        }
-
-        dary_heap_insert(dary_heap, 0, start);
-
-        while (dary_heap->size > 0)
-        {
-            int u, min_dist;
-            dary_heap_extract_min(dary_heap, &min_dist, &u);
-
-            if (min_dist > dist[u])
-                continue;
-
-            char msg[128];
-            snprintf(msg, sizeof(msg), "Dijkstra (d-Ary): Extracted node %d (distance %d)", u,
-                     dist[u]);
-            algorithm_step_hook(msg);
-
-            Edge* current = graph->array[u];
-            while (current != NULL)
-            {
-                int v = current->destination;
-                int currentWeight = current->weight;
-                if (dist[u] != INT_MAX && dist[u] + currentWeight < dist[v])
-                {
-                    dist[v] = dist[u] + currentWeight;
-                    snprintf(msg, sizeof(msg),
-                             "Dijkstra (d-Ary): Relaxed edge %d -> %d (new dist %d)", u, v,
-                             dist[v]);
-                    algorithm_step_hook(msg);
-                    int idx = dary_heap_find_by_value(dary_heap, v);
-                    if (idx == -1)
-                    {
-                        dary_heap_insert(dary_heap, dist[v], v);
-                    }
-                    else
-                    {
-                        dary_heap_decrease_key(dary_heap, idx, dist[v]);
-                    }
-                }
-                current = current->next;
-            }
-        }
-        destroy_dary_heap(dary_heap);
-    }
 
     end_t = clock();
     total_t = (double)(end_t - start_t) / CLOCKS_PER_SEC;
