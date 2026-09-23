@@ -150,18 +150,6 @@ void dijkstra(weightedGraph* graph, int start)
     dist[start] = 0;
 
     int heap_choice = 1;
-    if (isatty(fileno(stdin)))
-    {
-        printf("\nSelect Priority Queue (Heap) Type for Dijkstra:\n"
-               "1. Binary Heap (Standard)\n"
-               "2. Fibonacci Heap (Amortized O(1) decrease-key)\n"
-               "3. d-Ary Heap (4-Ary configuration)\n");
-        if (safe_input_int(&heap_choice, "\nenter choice (\'-1\' to exit, or \'help\') : ", 1, 3) !=
-            1)
-        {
-            heap_choice = 1;
-        }
-    }
 
     clock_t start_t, end_t;
     double total_t = 0.0;
